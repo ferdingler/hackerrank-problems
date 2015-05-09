@@ -6,11 +6,11 @@ import java.util.regex.*;
 
 public class AcmIcpcTeam {
 
-    public static int numberOfTopics(int teamTopics){
+    public static int numberOfTopics(BigInteger teamTopics){
         int topics = 0;
-        while(teamTopics > 0){
-            topics += teamTopics & 1;
-            teamTopics = teamTopics >> 1;
+        while(teamTopics.compareTo(BigInteger.ZERO) != 0){
+            topics += teamTopics.and(BigInteger.ONE).intValue();
+            teamTopics = teamTopics.shiftRight(1);
         }
         return topics;
     }
@@ -20,11 +20,10 @@ public class AcmIcpcTeam {
         Scanner in = new Scanner(System.in);
         int N = in.nextInt();
         int M = in.nextInt();
-        int[] people = new int[N];
+        BigInteger[] people = new BigInteger[N];
         
         for(int i=0; i<N; i++){
-            int number = Integer.parseInt(in.next(), 2);
-            people[i] = number;
+            people[i] = new BigInteger(in.next(), 2);
         }
         
         int maxTopics = 0; 
@@ -33,7 +32,7 @@ public class AcmIcpcTeam {
             for(int j=i+1; j<N; j++){
                 if(i != j){
                     
-                    int team = people[i] | people[j];
+                    BigInteger team = people[i].or(people[j]);
                     int topics = numberOfTopics(team);
                     
                     if(topics > maxTopics){
