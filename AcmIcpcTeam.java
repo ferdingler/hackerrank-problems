@@ -6,15 +6,6 @@ import java.util.regex.*;
 
 public class AcmIcpcTeam {
 
-    public static int numberOfTopics(BigInteger teamTopics){
-        int topics = 0;
-        while(teamTopics.compareTo(BigInteger.ZERO) != 0){
-            topics += teamTopics.and(BigInteger.ONE).intValue();
-            teamTopics = teamTopics.shiftRight(1);
-        }
-        return topics;
-    }
-    
     public static void main(String[] args) {
 
         Scanner in = new Scanner(System.in);
@@ -33,7 +24,7 @@ public class AcmIcpcTeam {
                 if(i != j){
                     
                     BigInteger team = people[i].or(people[j]);
-                    int topics = numberOfTopics(team);
+                    int topics = team.bitCount();
                     
                     if(topics > maxTopics){
                         maxTopics = topics;
