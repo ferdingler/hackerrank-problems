@@ -15,17 +15,27 @@ public class SherlockAndSquares {
     	Scanner in = new Scanner(System.in);
     	int t = in.nextInt();
 
-    	for(int i=0; i<t; i++){
+    	int max = 1000000000;
+    	int squareNumbers[] = new int[31624];
+    	int i = 1; 
+    	int n = 0;
+
+    	do {
+    		n = (int) Math.pow(i, 2);
+    		squareNumbers[i++] = n;
+    	} while(n < max);
+
+    	for(int x=0; x<t; x++){
             
-            long a = in.nextLong();
-            long b = in.nextLong();
+            int a = in.nextInt();
+            int b = in.nextInt();
             int howMany = 0;
-            
-            for(Long n=a; n<=b; n++){
-                if(Math.sqrt(n.doubleValue()) % 1 == 0)
-                    howMany++;
+
+            for(int j=0; j<squareNumbers.length; j++){
+            	if(squareNumbers[j] >= a && squareNumbers[j] <= b)
+            		howMany++;
             }
-            
+
             System.out.println(howMany);
             
     	}
