@@ -12,13 +12,13 @@ public class Candies {
         
         Scanner in = new Scanner(System.in);
         int n = in.nextInt();
-        int children[] = new int[n];
+        int grades[] = new int[n];
         int candies[] = new int[n];
         int totalCandies = 0;
         Queue<Integer> onHold = new LinkedList<Integer>();
         
         for(int i=0; i<n; i++){
-            children[i] = in.nextInt();
+            grades[i] = in.nextInt();
             onHold.add(i);
         }
         
@@ -28,15 +28,15 @@ public class Candies {
             int leftNeighbor = -1;
             int rightNeighbor = -1;
 
-            if(i < children.length - 1){
-                rightNeighbor = myNeighborCandies(i, i+1, children, candies);
+            if(i < grades.length - 1){
+                rightNeighbor = myNeighborCandies(i, i+1, grades, candies);
                 if(rightNeighbor == -1){
                     onHold.add(i); continue;
                 }
             }
 
             if(i > 0){
-                leftNeighbor = myNeighborCandies(i, i-1, children, candies);
+                leftNeighbor = myNeighborCandies(i, i-1, grades, candies);
                 if(leftNeighbor == -1){
                     onHold.add(i); continue;
                 }
@@ -49,8 +49,8 @@ public class Candies {
         System.out.println(totalCandies);
     }
 
-    public static int myNeighborCandies(int i, int neighbor, int[] children, int[] candies){
-        if(children[i] > children[neighbor])
+    public static int myNeighborCandies(int i, int neighbor, int[] grades, int[] candies){
+        if(grades[i] > grades[neighbor])
             return (candies[neighbor] == 0)? -1 : candies[neighbor];
         return 0;
     }       
