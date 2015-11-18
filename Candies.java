@@ -6,6 +6,8 @@ import java.util.regex.*;
 
 public class Candies {
 
+    // https://www.hackerrank.com/challenges/candies
+
     public static void main(String[] args) {
         
         Scanner in = new Scanner(System.in);
