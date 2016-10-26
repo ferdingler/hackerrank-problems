@@ -20,15 +20,10 @@ public class Arrays2D {
         }
 
         List<int[]> hourGlasses = getHourGlasses(matrix);
-
-        int max = Integer.MIN_VALUE;
-        for(int[] hourGlass : hourGlasses){
-            int sum = 0;
-            for (int num : hourGlass) {
-                sum += num;
-            }
-            max = Math.max(sum, max);
-        }
+        int max = hourGlasses.stream()
+                .map((hourGlass) -> Arrays.stream(hourGlass).sum())
+                .max(Comparator.naturalOrder())
+                .get();
 
         System.out.println(max);
     }
@@ -36,8 +31,8 @@ public class Arrays2D {
     private static List<int[]> getHourGlasses(int[][] matrix){
 
         List<int[]> hourGlasses = new ArrayList<>();
-        for(int i=0; i<6; i++){
-            for(int j=0; j<6; j++){
+        for(int i=0; i<matrix.length; i++){
+            for(int j=0; j<matrix.length; j++){
                 int[] hourGlass = getHourGlass(matrix, i, j);
                 if(hourGlass != null){
                     hourGlasses.add(hourGlass);
@@ -59,7 +54,10 @@ public class Arrays2D {
             return null;
         }
 
-        return new int[]{ matrix[i][j], matrix[i][j+1], matrix[i][j+2], matrix[i+1][j+1], matrix[i+2][j], matrix[i+2][j+1], matrix[i+2][j+2] };
+        return new int[]{
+                matrix[i][j], matrix[i][j+1], matrix[i][j+2],
+                                matrix[i+1][j+1],
+                matrix[i+2][j], matrix[i+2][j+1], matrix[i+2][j+2] };
     }
 
 }
