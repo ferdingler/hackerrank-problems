@@ -1,4 +1,5 @@
-import java.util.Scanner;
+import javax.sound.midi.SysexMessage;
+import java.util.*;
 
 /**
  * https://www.hackerrank.com/challenges/the-grid-search
@@ -38,52 +39,83 @@ public class GridSearch {
     private static boolean containsPattern(char[][] m, char[][] pattern){
 
         int pIndex = 0;
-        int indexOf = 0;
-        int indexOfPrev = 0;
+        List<List<Integer>> matches = new ArrayList<>();
 
-        for(int i=0; i<m.length && pIndex < pattern.length; i++){
+        for(int i=0; i<m.length; i++){
 
-            indexOf = indexOfPattern(m[i], pattern[pIndex]);
+            matches = new ArrayList<>();
+            pIndex = 0;
+            for(int j=i; j<m.length && pIndex < pattern.length; j++){
 
-            if(indexOf >= 0 && (indexOfPrev == indexOf || pIndex == 0)){
+                List<Integer> indexes = indexesOfPattern(m[j], pattern[pIndex]);
+                if(indexes.size() <= 0){
+                    break;
+                }
+
+                matches.add(indexes);
                 pIndex++;
-                indexOfPrev = indexOf;
-            } else {
-                i = (pIndex > 0)? i - 1 : i;
-                pIndex = 0;
             }
 
-            if(pattern.length - pIndex > m.length - i){
+            if(pIndex == pattern.length){
                 break;
             }
-
         }
 
-        return pIndex == pattern.length;
+        if(matches.size() == 0){
+            return false;
+        }
+
+        // From all the indexes, we need to grab the intersection of all.
+        // If the resulting intersection is empty, then the pattern was not found.
+        List<Integer> intersection = matches.get(0);
+        for(int i=1; i<matches.size(); i++){
+            intersection = intersection(intersection, matches.get(i));
+        }
+
+        return intersection.size() > 0;
     }
 
-    private static int indexOfPattern(char[] a, char[] pattern){
+    private static List<Integer> intersection(List<Integer> a, List<Integer> b) {
 
-        int pIndex = 0;
-        int indexOf = 0;
-
-        for(int i=0; i<a.length && pIndex < pattern.length; i++){
-
-            if(a[i] == pattern[pIndex]){
-                pIndex++;
-                indexOf = (pIndex == 1)? i : indexOf;
-            } else {
-                i = (pIndex > 0)? i - 1 : i;
-                pIndex = 0;
-            }
-
-            if(pattern.length - pIndex > a.length - i){
-                break;
-            }
-
+        Set<Integer> set1 = new HashSet<>();
+        for(int i: a){
+            set1.add(i);
         }
 
-        return (pIndex == pattern.length)? indexOf : -1;
+        Set<Integer> set2 = new HashSet<>();
+        for(int i: b){
+            if(set1.contains(i)){
+                set2.add(i);
+            }
+        }
+
+        return new ArrayList<>(set2);
+    }
+
+    private static List<Integer> indexesOfPattern(char[] a, char[] pattern){
+
+        List<Integer> indexes = new ArrayList<>();
+        for(int i=0; i<a.length; i++){
+
+            int indexOf = 0;
+            int pIndex = 0;
+            for(int j=i; j<a.length && pIndex < pattern.length; j++){
+
+                if(a[j] != pattern[pIndex]){
+                    break;
+                }
+
+                if(pIndex++ == 0){
+                    indexOf = i;
+                }
+            }
+
+            if(pIndex == pattern.length){
+                indexes.add(indexOf);
+            }
+        }
+
+        return indexes;
     }
 
 }
