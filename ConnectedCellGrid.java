@@ -23,149 +23,47 @@ public class ConnectedCellGrid {
             }
         }
 
+        System.out.println(getBiggestRegion(grid));
+    }
 
-        Graph graph = new Graph(grid);
+    private static int getBiggestRegion(int[][] grid){
+
         int maxRegionSize = 0;
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] visited = new boolean[n][m];
+
         for(int row=0; row<n; row++){
             for(int col=0; col<m; col++){
-
-                Node node = graph.getNode(String.format("%d%d", row, col));
-                List<Node> region = new ArrayList<>();
-                node.getRegion(region, new HashMap<>());
-
-                maxRegionSize = Math.max(maxRegionSize, region.size());
+                int region = cellsInRegion(grid, row, col, visited);
+                maxRegionSize = Math.max(maxRegionSize, region);
             }
         }
 
-        System.out.println(maxRegionSize);
+        return maxRegionSize;
     }
 
-    private static class Graph {
+    private static int cellsInRegion(int[][] grid, int row, int col, boolean[][] visited) {
 
-        Map<String, Node> nodes;
-
-        Graph(int[][] grid){
-
-            this.nodes = new HashMap<>();
-            int n = grid.length;
-            int m = grid[0].length;
-
-            for(int row=0; row<n; row++){
-                for(int col=0; col<m; col++){
-
-                    String nodeId = String.format("%d%d", row, col);
-                    Node node = this.getNode(nodeId, grid[row][col]);
-
-                    String neighborId;
-                    int value;
-
-                    if(row+1 < n) {
-
-                        neighborId = String.format("%d%d", row + 1, col);
-                        value = grid[row + 1][col];
-                        this.addConnection(node, this.getNode(neighborId, value));
-
-                        if(col+1 < m) {
-                            neighborId = String.format("%d%d", row + 1, col + 1);
-                            value = grid[row + 1][col + 1];
-                            this.addConnection(node, this.getNode(neighborId, value));
-                        }
-
-                        if(col-1 >= 0) {
-                            neighborId = String.format("%d%d", row + 1, col - 1);
-                            value = grid[row + 1][col - 1];
-                            this.addConnection(node, this.getNode(neighborId, value));
-                        }
-
-                    }
-
-                    if(col+1 < m) {
-                        neighborId = String.format("%d%d", row, col + 1);
-                        value = grid[row][col + 1];
-                        this.addConnection(node, this.getNode(neighborId, value));
-                    }
-
-                    if(col-1 >= 0) {
-                        neighborId = String.format("%d%d", row, col - 1);
-                        value = grid[row][col - 1];
-                        this.addConnection(node, this.getNode(neighborId, value));
-                    }
-
-                    if(row-1 >= 0){
-
-                        neighborId = String.format("%d%d", row-1, col);
-                        value = grid[row-1][col];
-                        this.addConnection(node, this.getNode(neighborId, value));
-
-                        if(col+1 < m) {
-                            neighborId = String.format("%d%d", row-1, col + 1);
-                            value = grid[row-1][col + 1];
-                            this.addConnection(node, this.getNode(neighborId, value));
-                        }
-
-                        if(col-1 >= 0){
-                            neighborId = String.format("%d%d", row-1, col - 1);
-                            value = grid[row-1][col-1];
-                            this.addConnection(node, this.getNode(neighborId, value));
-                        }
-                    }
-                }
-            }
+        if(row < 0 || row>=grid.length || col < 0 || col >= grid[0].length){
+            return 0;
         }
 
-        Node getNode(String nodeId, int value){
-
-            if(nodes.containsKey(nodeId)){
-                return nodes.get(nodeId);
-            }
-
-            return new Node(nodeId, value);
+        if(visited[row][col] || grid[row][col] == 0){
+            return 0;
         }
 
-        Node getNode(String nodeId){
-            return nodes.get(nodeId);
-        }
+        visited[row][col] = true;
+        int cells = 1;
+        cells += cellsInRegion(grid, row - 1, col - 1, visited);
+        cells += cellsInRegion(grid, row - 1, col, visited);
+        cells += cellsInRegion(grid, row - 1, col + 1, visited);
+        cells += cellsInRegion(grid, row, col - 1, visited);
+        cells += cellsInRegion(grid, row, col + 1, visited);
+        cells += cellsInRegion(grid, row + 1, col - 1, visited);
+        cells += cellsInRegion(grid, row + 1, col + 1, visited);
+        cells += cellsInRegion(grid, row + 1, col, visited);
 
-        void addConnection(Node node1, Node node2){
-            node1.addConnection(node2);
-            node2.addConnection(node1);
-            nodes.put(node1.id, node1);
-            nodes.put(node2.id, node2);
-        }
-
-    }
-
-    private static class Node {
-
-        String id;
-        int value;
-        Map<String, Node> connections;
-
-        Node(String id, int value){
-            this.id = id;
-            this.value = value;
-            this.connections = new HashMap<>();
-        }
-
-        void addConnection(Node node){
-            if(!connections.containsKey(node.id)){
-                connections.put(node.id, node);
-            }
-        }
-
-        void getRegion(List<Node> region, Map<String, Node> visited){
-
-            if(this.value == 0 || visited.containsKey(this.id)){
-                return;
-            }
-
-            visited.put(this.id, this);
-            region.add(this);
-
-            Collection<Node> conn = this.connections.values();
-            for(Node node : conn){
-                node.getRegion(region, visited);
-            }
-        }
+        return cells;
     }
 }
