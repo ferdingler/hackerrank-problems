@@ -23,28 +23,55 @@ public class IceCreamParlor {
                 a[a_i] = in.nextInt();
             }
 
-            for(int i=0; i<n; i++){
+            // We sort to dp binary search
+            int[] sorted = a.clone();
+            Arrays.sort(sorted);
 
-                if(a[i] >= m){
-                    continue;
-                }
-
-                boolean found = false;
-                for(int j=0; j<n; j++){
-                    if(i != j){
-                        if(a[j] + a[i] == m){
-                            System.out.println((i+1) + " " + (j+1));
-                            found = true;
-                            break;
-                        }
+            int cost1 = 0;
+            int cost2 = 0;
+            for(int i=n-1; i>=0; i--){
+                if(sorted[i] < m){
+                    int complement = m - sorted[i];
+                    if(binarySearch(sorted, complement, 0, i-1)){
+                        cost1 = sorted[i];
+                        cost2 = complement;
+                        break;
                     }
-                }
-
-                if(found){
-                    break;
                 }
             }
 
+            int sunny = indexOf(a, cost1, -1);
+            int johnny = indexOf(a, cost2, sunny);
+
+            System.out.println((Math.min(sunny, johnny) + 1) + " " + (Math.max(sunny, johnny) + 1));
         }
     }
+
+    private static int indexOf(int[] a, int num, int exclude){
+        for(int i=0; i<a.length; i++){
+            if(a[i] == num && i != exclude){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean binarySearch(int[] arr, int num, int left, int right){
+
+        int mid = ((right - left) / 2) + left;
+
+        if(arr[mid] == num){
+            return true;
+        }
+
+        if(left >= right){
+            return false;
+        }
+
+        right = (arr[mid] > num)? mid - 1 : right;
+        left = (arr[mid] < num)? mid + 1 : left;
+
+        return binarySearch(arr, num, left, right);
+    }
+
 }
