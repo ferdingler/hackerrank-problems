@@ -17,11 +17,11 @@ public class RunningMedian {
 
             int next = in.nextInt();
             if(next < median){
-                balance(min, max);
                 max.add(next);
+                balance(max, min);
             } else {
-                balance(min, max);
                 min.add(next);
+                balance(min, max);
             }
 
             median = getMedian(min, max);
