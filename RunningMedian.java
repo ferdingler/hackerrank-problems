@@ -17,28 +17,37 @@ public class RunningMedian {
 
             int next = in.nextInt();
             if(next < median){
-                if(max.size() - min.size() > 0){
-                    min.add(max.poll());
-                }
+                balance(min, max);
                 max.add(next);
             } else {
-                if(min.size() - max.size() > 0){
-                    max.add(min.poll());
-                }
+                balance(min, max);
                 min.add(next);
             }
 
-            if(max.size() > min.size()){
-                median = max.peek();
-            } else if(min.size() > max.size()){
-                median = min.peek();
-            } else {
-                median = (max.peek() + min.peek()) / 2.0;
-            }
-
+            median = getMedian(min, max);
             System.out.println(round(median, 1));
         }
+    }
 
+    private static double getMedian(Queue<Integer> min, Queue<Integer> max){
+
+        if(max.size() > min.size()){
+            return max.peek();
+        }
+
+        if(min.size() > max.size()){
+            return min.peek();
+        }
+
+        return (max.peek() + min.peek()) / 2.0;
+    }
+
+    private static void balance(Queue<Integer> q1, Queue<Integer> q2){
+        if(q1.size() - q2.size() > 0){
+            q2.add(q1.poll());
+        } else if(q2.size() - q1.size() > 0){
+            q1.add(q2.poll());
+        }
     }
 
     private static double round (double value, int precision) {
