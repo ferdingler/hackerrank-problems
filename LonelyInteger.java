@@ -11,19 +11,11 @@ import java.util.regex.*;
 public class LonelyInteger {
 
     private static int lonelyInteger(int[] a) {
-
-        int[] counts = new int[100];
+        int result = 0;
         for (int n : a) {
-            counts[n] += 1;
+            result ^= n;
         }
-
-        for(int i=0; i<counts.length; i++){
-            if(counts[i] == 1){
-                return i;
-            }
-        }
-
-        return a[0];
+        return result;
     }
 
     public static void main(String[] args) {
